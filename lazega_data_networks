@@ -1,0 +1,33 @@
+library(ergm)
+library(ernm)
+setwd("~/Documents/MASTER_THESIS")
+
+#ian's code:
+el <- read.table("LazegaLawyers/elwork36.dat",sep=" ")[,-1]
+at <- read.table("LazegaLawyers/Elattr.dat")
+colnames(at) <- c("seniority","status","gender","office","years","age","practice","school")
+net <- network(el,directed=FALSE)
+nw <- as.BinaryNet(net)
+for(n in colnames(at)){
+  net %v% n <- at[1:36,n]
+	nw[[n]] <- factor(at[1:36,n])
+}
+
+nw[["cSeniority"]] <- at$seniority[1:36] #need continuous versions of the variables
+nw[["cPractice"]] <- at$practice[1:36]
+net <- as.network(nw)
+
+#form1 <- nw ~ edges() + nodeMatch("gender") + nodeMatch("office")  + nodeMatch("practice") +
+#  nodeCov("cSeniority") + nodeCov("cPractice")
+#form2 <- net ~ edges + nodematch("gender") + nodematch("office")  + nodematch("practice") + 
+#  nodecov("cSeniority") + nodecov("cPractice")
+#fit1 = ernm(form1,verbose=0)
+#fit2 = ergm(form2,verbose=0)
+
+#overwriting my versions of the data:
+elwork.ernm = nw
+elwork.nu = net
+
+#small network
+g<-network(el[12:17,12:17],directed=FALSE);g
+gg<-as.BinaryNet(g)
